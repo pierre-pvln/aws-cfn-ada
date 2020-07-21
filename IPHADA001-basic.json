@@ -1,0 +1,304 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Metadata": {
+    },
+    "Parameters" : {
+    "IPHADATemplateVersion" : {
+        "Type" : "String",
+        "Default" : "v001",
+        "MinLength" : "4",
+        "MaxLength" : "4",
+        "Description" : "Enter version number of template vXXX"
+        },
+
+    "IPHADAKeyName" : {
+		"Description" : "Name of an existing EC2 KeyPair",
+		"Default" : "anaconda-data-analytics",
+		"Type" : "AWS::EC2::KeyPair::KeyName",
+		"ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
+		},
+
+     "IPHADAInstanceType" : {
+		"Description" : "Amazon EC2 instance type",
+		"Type" : "String",	
+		"Default" : "t2.micro",
+		"AllowedValues" : [ "t1.micro", "t2.micro", "t2.small", "t2.medium", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"],
+		"ConstraintDescription" : "must be a valid EC2 instance type."
+		}
+    },
+    
+    "Resources": {
+        "IPHADAMainVPC": {
+            "Type": "AWS::EC2::VPC",
+            "Properties": {
+                "Tags": [
+                    { "Key": "Name",    "Value": "IPHADA_MainVPC" },
+                    { "Key": "Version", "Value": { "Ref": "IPHADATemplateVersion" } }
+                ],
+                "EnableDnsSupport": "true",
+                "EnableDnsHostnames": "true",
+                "CidrBlock": "10.0.0.0/16",
+                "InstanceTenancy": "default"
+            },
+            "Metadata": {
+                "Comment": "VPC container waar alles in komt"
+            }
+        },
+
+        "IPHADALinuxSubnet": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "Tags": [
+                    { "Key": "Name", "Value": "IPHADA_LinuxSubnet" },
+                    { "Key": "Version", "Value": { "Ref": "IPHADATemplateVersion" } }
+                ],
+                "CidrBlock": "10.0.1.0/24",
+                "VpcId": {
+                    "Ref": "IPHADAMainVPC"
+                }
+            },
+            "Metadata": {
+                "Comment": "Linux Subnet, with access to Internet"
+            }
+        },
+
+       "IPHADALinuxServer": {
+            "Type": "AWS::EC2::Instance",
+            "DependsOn": [
+                "IPHADALinuxRouteTable"
+            ],
+            "Properties": {
+                "Tags": [
+                    { "Key": "Name", "Value": "IPHADA_LinuxServer" },
+                    { "Key": "Version", "Value": { "Ref": "IPHADATemplateVersion" } }
+                ],
+                "InstanceType": { "Ref": "IPHADAInstanceType" },
+                "KeyName": { "Ref": "IPHADAKeyName" },
+                "ImageId": "ami-0b90a8636b6f955c1",
+				
+                "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+					  "#!/bin/bash -xe\n",
+					  "sudo apt-get update\n",
+					  "sudo apt-get upgrade -y\n"
+				]]}},
+                 "NetworkInterfaces": [
+                    {
+                        "DeviceIndex": "0",
+                        "Description": "Primary network interface",
+                        "SubnetId": {
+                            "Ref": "IPHADALinuxSubnet"
+                        },
+						"PrivateIpAddress": "10.0.1.5",
+                        "AssociatePublicIpAddress": "true",
+                        "GroupSet": [
+                            {
+                                "Ref": "IPHADALinuxBaselineSecurityGroup"
+                            },
+							{
+                                "Ref": "IPHADADebugSecurityGroup"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "Metadata": {
+                "Comment": "The server in the linux subnet"
+            }
+        },
+
+       "IPHADALinuxBaselineSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "Tags": [
+                    { "Key": "Name", "Value": "IPHADA_LinuxBaselineSecurityGroup" },
+                    { "Key": "Version", "Value": { "Ref": "IPHADATemplateVersion" } }
+                ],
+                "GroupDescription": "Enable SSH access",
+                "GroupName": "IPHADA_LinuxBaseline",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": "86.81.35.18/32",
+                        "Description": "SSH direct from homenetwork"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "IPHADAMainVPC"
+                }
+            },
+            "Metadata": {
+                "Comment": "Security group for Linux instance"
+            }
+        },
+
+       
+       "IPHADADebugSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "Tags": [
+                    { "Key": "Name", "Value": "IPHADA_DebugSecurityGroup" },
+                    { "Key": "Version", "Value": { "Ref": "IPHADATemplateVersion" } }
+                ],
+                "GroupDescription": "Debug all",
+                "GroupName": "IPHADA_Debug",
+                "SecurityGroupIngress": [
+					{
+                        "IpProtocol": -1,
+                        "FromPort": -1,
+                        "ToPort": -1,
+                        "CidrIp": "10.0.0.0/8",
+                        "Description": "From within VPCs / private IP ranges"
+                    },
+					{
+                        "IpProtocol": -1,
+                        "FromPort": -1,
+                        "ToPort": -1,
+                        "CidrIp": "172.16.0.0/12",
+                        "Description": "From within VPCs / private IP ranges"
+                    },
+					{
+                        "IpProtocol": -1,
+                        "FromPort": -1,
+                        "ToPort": -1,
+                        "CidrIp": "192.168.0.0/16",
+                        "Description": "From within VPCs / private IP ranges"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "IPHADAMainVPC"
+                }
+            },
+            "Metadata": {
+                "Comment": "Security group for debug instances"
+            }
+        },
+
+        "IPHADALinuxRouteTable": {
+            "Type": "AWS::EC2::RouteTable",
+            "DependsOn": [
+                "IPHADAInetgw",
+                "IPHADALinuxSubnet"
+            ],
+            "Properties": {
+                "Tags": [
+                    { "Key": "Name", "Value": "IPHADA_LinuxRouteTable" },
+                    { "Key": "Version", "Value": { "Ref": "IPHADATemplateVersion" } }
+                ],
+                "VpcId": {
+                    "Ref": "IPHADAMainVPC"
+                }
+            },
+            "Metadata": {
+                "Comment": "Basic route table for Linux Subnet"
+            }
+        },
+        
+        "IPHADAWindowsRouteToInternet": {
+            "Type": "AWS::EC2::Route",
+            "DependsOn": [
+                "IPHADAInetgw",
+                "IPHADALinuxSubnet"
+            ],
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "IPHADALinuxRouteTable"
+                },
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId": {
+                    "Ref": "IPHADAInetgw"
+                }
+            },
+            "Metadata": {
+                "Comment": "Route to internet from Linux"
+            }
+        },
+
+        "IPHADAInetgw": {
+            "Type": "AWS::EC2::InternetGateway",
+            "Properties": {
+                "Tags": [
+                    { "Key": "Name", "Value": "IPHADA_Inetgw" },
+                    { "Key": "Version", "Value": { "Ref": "IPHADATemplateVersion" } }
+                ]
+            },
+            "Metadata": {
+                "Comment": "Internet gateway"
+            }
+        },
+        
+        "IPHADAAttachementInetgw": {
+            "Type": "AWS::EC2::VPCGatewayAttachment",
+            "Properties": {
+                "InternetGatewayId": {
+                    "Ref": "IPHADAInetgw"
+                },
+                "VpcId": {
+                    "Ref": "IPHADAMainVPC"
+                }
+            },
+            "Metadata": {
+                "Comment": "Connection between Internet Gateway and Main VPC"
+            }
+        },
+        
+        "IPHADAWindowsSubnetRouteTableAssociation": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "IPHADALinuxRouteTable"
+                },
+                "SubnetId": {
+                    "Ref": "IPHADALinuxSubnet"
+                }
+            },
+            "Metadata": {
+                "Comment": "Route Table for Linux Subnet"
+            }
+        },
+
+        "IPHADADHCPOptions": {
+            "Type": "AWS::EC2::DHCPOptions",
+            "Properties": {
+                "Tags": [ 
+                    { "Key": "Name", "Value": "IPHADA_DHCPOptions" },
+                    { "Key": "Version", "Value": { "Ref": "IPHADATemplateVersion" } }
+                ],
+                "DomainName": {
+                    "Fn::Sub": "${AWS::Region}.compute.internal"
+                },
+                "DomainNameServers": [
+                    "AmazonProvidedDNS"
+                ]
+            },
+            "Metadata": {
+                "Comment": "DHCP Settings"
+            }
+        },
+        
+        "IPHADAVPCDHCPOptionsAssociation": {
+            "Type": "AWS::EC2::VPCDHCPOptionsAssociation",
+            "Properties": {
+                "DhcpOptionsId": {
+                    "Ref": "IPHADADHCPOptions"
+                },
+                "VpcId": {
+                    "Ref": "IPHADAMainVPC"
+                }
+            },
+            "Metadata": {
+                "Comment": "Connection between DHCP settings and Main VPC"
+            }
+        }
+	},	
+	
+    "Outputs": {
+        "WindowsServerDNSname": {
+            "Description": "The DNS-name of the Linux server",
+            "Value": {
+                "Fn::GetAtt": [ "IPHADALinuxServer", "PublicDnsName" ]
+            }
+		}	
+    }
+}
