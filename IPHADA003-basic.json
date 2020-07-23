@@ -4,7 +4,7 @@
     "Parameters": {
         "IPHADATemplateVersion": {
             "Type": "String",
-            "Default": "v002",
+            "Default": "v003",
             "MinLength": "4",
             "MaxLength": "4",
             "Description": "Enter version number of template vXXX"
@@ -185,31 +185,6 @@
                                 "#!/bin/bash -xe\n",
                                 "sudo apt-get update\n",
                                 "sudo apt-get upgrade -y\n",
-                                "# Install the files and packages from the metadata\n",
-                                "/opt/aws/bin/cfn-init -v ",
-                                "         --stack ",
-                                {
-                                    "Ref": "AWS::StackName"
-                                },
-                                "         --resource IPHADALinuxServer ",
-                                "         --configsets InstallAndRun ",
-                                "         --region ",
-                                {
-                                    "Ref": "AWS::Region"
-                                },
-                                "",
-                                "# Signal the status from cfn-init\n",
-                                "/opt/aws/bin/cfn-signal -e $? ",
-                                "         --stack ",
-                                {
-                                    "Ref": "AWS::StackName"
-                                },
-                                "         --resource IPHADALinuxServer ",
-                                "         --region ",
-                                {
-                                    "Ref": "AWS::Region"
-                                },
-                                ""
                             ]
                         ]
                     }
@@ -234,11 +209,6 @@
                     }
                 ]
             },
-            "CreationPolicy": {
-                "ResourceSignal": {
-                    "Timeout": "PT10M"
-                }
-            }
         },
         "IPHADALinuxBaselineSecurityGroup": {
             "Type": "AWS::EC2::SecurityGroup",
