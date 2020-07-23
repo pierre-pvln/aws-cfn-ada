@@ -428,7 +428,7 @@
         }
     },
     "Outputs": {
-        "WindowsServerDNSname": {
+        "LinuxServerDNSname": {
             "Description": "The DNS-name of the Linux server",
             "Value": {
                 "Fn::GetAtt": [
