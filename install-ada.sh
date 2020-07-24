@@ -13,7 +13,7 @@
 
 # ++++++++++++++++++++ START ANACONDA INSTALL +++++++++++++++++++++
 cd /home/ubuntu
-#su ubuntu
+su ubuntu
 
 # Download the Linux Anaconda Distribution
 wget https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh -O /tmp/anaconda3.sh
@@ -28,7 +28,7 @@ echo ". /home/ubuntu/anaconda3/etc/profile.d/conda.sh" >> /home/ubuntu/.bashrc
 source /home/ubuntu/.bashrc
 
 # Create base Python3 environments separate from the base env
-conda update -n base -c defaults conda
+conda update -y -n base -c defaults conda
 conda create -y --name ada37 python=3.7 
 conda create -y --name base37 python=3.7 
 
@@ -41,11 +41,11 @@ conda create -y --name base37 python=3.7
 # Note that 'source' is deprecated, so now we should be using 'conda' to activate/deactivate envs
 conda activate ada37
 #conda install -y -c conda-forge awscli 
-conda install -y notebook conda_kernels
-conda install -y geopandas
-conda install -y requests
-conda install -y mysql-connector-python
-conda install -y pysftp
+conda install -y -c conda-forge nb_conda_kernels
+conda install -y -c conda-forge geopandas
+conda install -y -c anaconda requests
+conda install -y -c anaconda mysql-connector-python 
+conda install -y -c conda-forge pysftp
 
 #save current environment settings
 conda env export --no-builds > /home/ubuntu/environment.yml
