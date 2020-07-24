@@ -13,7 +13,7 @@
 
 # ++++++++++++++++++++ START ANACONDA INSTALL +++++++++++++++++++++
 cd /home/ubuntu
-su ubuntu
+sudo su
 
 # Download the Linux Anaconda Distribution
 wget https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh -O /tmp/anaconda3.sh
