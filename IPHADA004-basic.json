@@ -185,10 +185,11 @@
                                 "#!/bin/bash -xe\n",
                                 "sudo apt-get update\n",
                                 "sudo apt-get upgrade -y\n",
+                                "# Install the the CloudFormation Helper Scripts\n",
                                 "sudo apt-get -y install python-setuptools\n",
                                 "sudo easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n",
                                 "# Install the files and packages from the metadata\n",
-                                "/opt/aws/bin/cfn-init -v ",
+                                "/usr/local/bin/cfn-init -v ",
                                 "         --stack ",
                                 {
                                     "Ref": "AWS::StackName"
@@ -201,7 +202,7 @@
                                 },
                                 "",
                                 "# Signal the status from cfn-init\n",
-                                "/opt/aws/bin/cfn-signal -e $? ",
+                                "/usr/local/bin/cfn-init -e $? ",
                                 "         --stack ",
                                 {
                                     "Ref": "AWS::StackName"
