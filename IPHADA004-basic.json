@@ -226,7 +226,7 @@
                                     "Ref": "AWS::Region"
                                 },
                                 "",
-                                "touch /home/ubuntu/start_of_UserData.txt\n",
+                                "touch /home/ubuntu/end_of_UserData.txt\n",
                             ]
                         ]
                     }
