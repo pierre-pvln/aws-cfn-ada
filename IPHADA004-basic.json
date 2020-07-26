@@ -195,10 +195,11 @@
                             "",
                             [
                                 "#!/bin/bash -xe\n",
+                                "touch /home/ubuntu/start_of_UserData.txt\n",
                                 "sudo apt-get update\n",
                                 "sudo apt-get upgrade -y\n",
                                 "# Install the the CloudFormation Helper Scripts\n",
-                                "sudo apt-get -y install python-setuptools\n",
+                                "sudo apt-get -y install python-pip\n",
                                 "sudo easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n",
                                 "# Install the files and packages from the metadata\n",
                                 "/usr/local/bin/cfn-init -v ",
@@ -224,7 +225,8 @@
                                 {
                                     "Ref": "AWS::Region"
                                 },
-                                ""
+                                "",
+                                "touch /home/ubuntu/start_of_UserData.txt\n",
                             ]
                         ]
                     }
