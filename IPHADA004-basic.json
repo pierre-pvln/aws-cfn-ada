@@ -4,7 +4,7 @@
     "Parameters": {
         "IPHADATemplateVersion": {
             "Type": "String",
-            "Default": "v003",
+            "Default": "v004",
             "MinLength": "4",
             "MaxLength": "4",
             "Description": "Enter version number of template vXXX"
@@ -136,18 +136,30 @@
                     },
                     "GetInstallScript": {
                         "commands": {
-                            "01_download_script": {
+                            "01_starttime_GetInstallScript": {
+                                "command": "touch /home/ubuntu/start_of_GetInstallScript.txt"
+                            },
+                            "02_download_script": {
                                 "command": "wget -O /home/ubuntu/install.sh \"https://raw.githubusercontent.com/pierre-pvln/aws-cfn-ada/master/install-ada.sh\""
+                            },
+                            "03_endtime_GetInstallScript": {
+                                "command": "touch /home/ubuntu/end_of_GetInstallScript.txt"
                             }
                         }
                     },
                     "InstallAnaconda": {
                         "commands": {
-                            "01_modify_permissions": {
+                            "01_starttime_InstallAnaconda": {
+                                "command": "touch /home/ubuntu/start_of_InstallAnaconda.txt"
+                            },
+                            "02_modify_permissions": {
                                 "command": "chmod 755 /home/ubuntu/install.sh"
                             },
-                            "02_install": {
+                            "03_install": {
                                 "command": "/home/ubuntu/install.sh"
+                            },
+                            "04_endtime_InstallAnaconda": {
+                                "command": "touch /home/ubuntu/end_of_InstallAnaconda.txt"
                             }
                         }
                     }
