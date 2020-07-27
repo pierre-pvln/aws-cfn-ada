@@ -189,11 +189,6 @@
                     }
                 ]
             },
-            "CreationPolicy": {
-                "ResourceSignal": {
-                    "Timeout": "PT30M"
-                }
-            }
         },
         "IPHADALinuxBaselineSecurityGroup": {
             "Type": "AWS::EC2::SecurityGroup",
