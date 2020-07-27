@@ -4,7 +4,7 @@
     "Parameters": {
         "IPHADATemplateVersion": {
             "Type": "String",
-            "Default": "v004",
+            "Default": "v005",
             "MinLength": "4",
             "MaxLength": "4",
             "Description": "Enter version number of template vXXX"
@@ -127,43 +127,6 @@
         "IPHADALinuxServer": {
             "Type": "AWS::EC2::Instance",
             "Metadata": {
-                "AWS::CloudFormation::Init": {
-                    "configSets": {
-                        "InstallAndRun": [
-                            "GetInstallScript",
-                            "InstallAnaconda"
-                        ]
-                    },
-                    "GetInstallScript": {
-                        "commands": {
-                            "01_starttime_GetInstallScript": {
-                                "command": "touch /home/ubuntu/start_of_GetInstallScript.txt"
-                            },
-                            "02_download_script": {
-                                "command": "wget -O /home/ubuntu/install.sh \"https://raw.githubusercontent.com/pierre-pvln/aws-cfn-ada/master/install-ada.sh\""
-                            },
-                            "03_endtime_GetInstallScript": {
-                                "command": "touch /home/ubuntu/end_of_GetInstallScript.txt"
-                            }
-                        }
-                    },
-                    "InstallAnaconda": {
-                        "commands": {
-                            "01_starttime_InstallAnaconda": {
-                                "command": "touch /home/ubuntu/start_of_InstallAnaconda.txt"
-                            },
-                            "02_modify_permissions": {
-                                "command": "chmod 755 /home/ubuntu/install.sh"
-                            },
-                            "03_install": {
-                                "command": "/home/ubuntu/install.sh"
-                            },
-                            "04_endtime_InstallAnaconda": {
-                                "command": "touch /home/ubuntu/end_of_InstallAnaconda.txt"
-                            }
-                        }
-                    }
-                },
                 "Comment": "The Anaconda Data Analytics server in the linux subnet"
             },
             "DependsOn": [
@@ -198,35 +161,10 @@
                                 "touch /home/ubuntu/start_of_UserData.txt\n",
                                 "sudo apt-get update\n",
                                 "sudo apt-get upgrade -y\n",
-                                "# Install the the CloudFormation Helper Scripts\n",
-                                "sudo apt-get -y install python3-pip\n",
-                                "sudo easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n",
-                                "# Install the files and packages from the metadata\n",
-                                "/usr/local/bin/cfn-init -v ",
-                                "         --stack ",
-                                {
-                                    "Ref": "AWS::StackName"
-                                },
-                                "         --resource IPHADALinuxServer ",
-                                "         --configsets InstallAndRun ",
-                                "         --region ",
-                                {
-                                    "Ref": "AWS::Region"
-                                },
-                                "",
-                                "# Signal the status from cfn-init\n",
-                                "/usr/local/bin/cfn-init -e $? ",
-                                "         --stack ",
-                                {
-                                    "Ref": "AWS::StackName"
-                                },
-                                "         --resource IPHADALinuxServer ",
-                                "         --region ",
-                                {
-                                    "Ref": "AWS::Region"
-                                },
-                                "",
-                                "touch /home/ubuntu/end_of_UserData.txt\n",
+                                "wget -O /home/ubuntu/install.sh \"https://raw.githubusercontent.com/pierre-pvln/aws-cfn-ada/master/install-ada.sh\"\n",
+                                "chmod 755 /home/ubuntu/install.sh\n",
+                                "/home/ubuntu/install.sh\n",
+                                "touch /home/ubuntu/end_of_UserData.txt\n"
                             ]
                         ]
                     }
