@@ -1,0 +1,18 @@
+[
+  {
+    "ParameterKey": "IPHADATemplateVersion",
+    "ParameterValue": "v006"
+  },
+  {
+    "ParameterKey": "IPHADAServerPrivateIP",
+    "ParameterValue": "10.0.1.5"
+  },
+  {
+    "ParameterKey": "IPHADAKeyName",
+    "ParameterValue": "anaconda-data-analytics"
+  },
+  {
+    "ParameterKey": "IPHADAInstanceType",
+    "ParameterValue": "t2.micro"
+  } 
+]
