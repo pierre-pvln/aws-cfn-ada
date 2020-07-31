@@ -12,14 +12,20 @@
         "IPHADAServerPrivateIP": {
             "Description": "Private IP adress for server",
             "Default": "10.0.1.5",
-            "Type": "AWS::EC2::NetworkInterface::PrivateIpAddress",
+            "Type": "String",
             "ConstraintDescription": "Must be a valid private IP adresss in 10.0.1.0/24 range."
+        },
+        "IPHADAJupyterPort": {
+            "Description": "Portnumber for communicating with Jupyter Notebook",
+            "Default": "8888",
+            "Type": "String",
+            "ConstraintDescription": "Must be a valid port number."
         },
         "IPHADAKeyName": {
             "Description": "Name of an existing EC2 KeyPair",
             "Default": "anaconda-data-analytics",
             "Type": "AWS::EC2::KeyPair::KeyName",
-            "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
+            "ConstraintDescription": "Must be the name of an existing EC2 KeyPair."
         },
         "IPHADAInstanceType": {
             "Description": "Amazon EC2 instance type",
@@ -167,10 +173,17 @@
                                 "touch /home/ubuntu/start_of_UserData.txt\n",
                                 "sudo apt-get update\n",
                                 "sudo apt-get upgrade -y\n",
-                                "#openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj '/CN=www.ipheion.eu/O=Ipheion/C=NL/ST=Limburg/L=Posterholt' -keyout mykey.key -out mycert.pem",
+                                "#openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj '/CN=ipheion.eu/O=Ipheion/C=NL/ST=Limburg/L=Posterholt' -keyout mykey.key -out mycert.pem",
                                 "wget -O /home/ubuntu/install.sh \"https://raw.githubusercontent.com/pierre-pvln/aws-cfn-ada/master/install-ada.sh\"\n",
                                 "chmod 755 /home/ubuntu/install.sh\n",
-                                "/home/ubuntu/install.sh\n",
+                                "sudo /home/ubuntu/install.sh\n",
+								"mkdir /home/ubuntu/.jupyter\n",
+								"cd /home/ubuntu/.jupyter/\n",
+								"echo c.NotebookApp.certfile = u\'/home/ubuntu/.ssh/mycert.pem\' >jupyter_notebook_config.py \n",
+								"echo c.NotebookApp.keyfile = u\'/home/ubuntu/.ssh/mykey.key\' >>jupyter_notebook_config.py \n",
+                                "echo c.NotebookApp.ip = \'*\' >>jupyter_notebook_config.py \n",
+                                "echo c.NotebookApp.open_browser = False >>jupyter_notebook_config.py \n",
+                                "echo c.NotebookApp.port = 8888 >>jupyter_notebook_config.py \n",
                                 "touch /home/ubuntu/end_of_UserData.txt\n"
                             ]
                         ]
@@ -256,8 +269,12 @@
                 "SecurityGroupIngress": [
                     {
                         "IpProtocol": "tcp",
-                        "FromPort": "8888",
-                        "ToPort": "8888",
+                        "FromPort": {
+                            "Ref": "IPHADAJupyterPort"
+                        },
+                        "ToPort": {
+                            "Ref": "IPHADAJupyterPort"
+                        },
                         "CidrIp": "86.81.35.18/32",
                         "Description": "Access from homenetwork"
                     }

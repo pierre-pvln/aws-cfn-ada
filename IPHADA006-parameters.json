@@ -8,6 +8,10 @@
     "ParameterValue": "10.0.1.5"
   },
   {
+    "ParameterKey": "IPHADAJupyterPort",
+    "ParameterValue": "8888"
+  },
+  {
     "ParameterKey": "IPHADAKeyName",
     "ParameterValue": "anaconda-data-analytics"
   },
