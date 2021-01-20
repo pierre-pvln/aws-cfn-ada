@@ -12,7 +12,6 @@
 
 
 # ++++++++++++++++++++ START ANACONDA INSTALL +++++++++++++++++++++
-cd /home/ubuntu
 #sudo su
 
 # Download the Linux Anaconda Distribution
@@ -57,5 +56,17 @@ conda env export --no-builds > /home/ubuntu/environment.yml
 ### Setup the credentials for the AWS CLI
 ##aws configure set aws_access_key_id $1
 ##aws configure set aws_secret_access_key $2
+
+# ++++++++++++++ END SETUP ENV +++++++++++++++
+
+# ++++++++++++++ SETUP CODE +++++++++++++++
+cd /home/ubuntu
+mkdir plotlydash
+cd plotlydash
+mkdir code
+mkdir output
+
+wget http:/download.pvln.nl/python/fastfood/code/show_selection_and_point_on_map_dynamic_v02.py -O code/show_selection_and_point_on_map_dynamic_v02.py
+wget http:/download.pvln.nl/python/fastfood/output/_FastFood.csv -O output/FastFood.csv
 
 # ++++++++++++ END  +++++++++++++
