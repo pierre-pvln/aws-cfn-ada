@@ -67,6 +67,6 @@ mkdir code
 mkdir output
 
 wget http:/download.pvln.nl/python/fastfood/code/show_selection_and_point_on_map_dynamic_v02.py -O code/show_selection_and_point_on_map_dynamic_v02.py
-wget http:/download.pvln.nl/python/fastfood/output/_FastFood.csv -O output/FastFood.csv
+wget http:/download.pvln.nl/python/fastfood/output/_FastFood.csv -O output/_FastFood.csv
 
 # ++++++++++++ END  +++++++++++++
