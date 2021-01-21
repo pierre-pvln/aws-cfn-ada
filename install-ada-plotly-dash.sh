@@ -75,6 +75,4 @@ echo "coda activate ada38" >/home/ubuntu/start.sh
 echo "python plotlydash/code/the_code.py" >>/home/ubuntu/start.sh
 chmod +x start.sh
 
-chown -R ubuntu:ubuntu /home/ubuntu
-
 # ++++++++++++ END  +++++++++++++

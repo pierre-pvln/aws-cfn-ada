@@ -173,9 +173,12 @@
                                 "touch /home/ubuntu/start_of_UserData.txt\n",
                                 "sudo apt-get update\n",
                                 "sudo apt-get upgrade -y\n",
+								"touch /home/ubuntu/getting_install.txt\n",
                                 "wget -O /home/ubuntu/install.sh \"https://raw.githubusercontent.com/pierre-pvln/aws-cfn-ada/master/install-ada-plotly-dash.sh\"\n",
-                                "chmod 755 /home/ubuntu/install.sh\n",
+                                "chmod +x /home/ubuntu/install.sh\n",
+								"touch /home/ubuntu/running_install.txt\n",
                                 "sudo /home/ubuntu/install.sh\n",
+								"chown -R ubuntu:ubuntu /home/ubuntu\n"
                                 "touch /home/ubuntu/end_of_UserData.txt\n"
                             ]
                         ]
