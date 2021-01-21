@@ -358,7 +358,7 @@
                 "Comment": "Basic route table for Linux Subnet"
             }
         },
-        "IPHADAWindowsRouteToInternet": {
+        "IPHADALinuxRouteToInternet": {
             "Type": "AWS::EC2::Route",
             "DependsOn": [
                 "IPHADAInetgw",
@@ -411,7 +411,7 @@
                 "Comment": "Connection between Internet Gateway and Main VPC"
             }
         },
-        "IPHADAWindowsSubnetRouteTableAssociation": {
+        "IPHADALinuxSubnetRouteTableAssociation": {
             "Type": "AWS::EC2::SubnetRouteTableAssociation",
             "Properties": {
                 "RouteTableId": {
