@@ -67,6 +67,11 @@ mkdir code
 mkdir output
 
 wget http:/download.pvln.nl/python/fastfood/code/show_selection_and_point_on_map_dynamic_v02.py -O code/show_selection_and_point_on_map_dynamic_v02.py
+cp code/show_selection_and_point_on_map_dynamic_v02.py code/the_code.py
 wget http:/download.pvln.nl/python/fastfood/output/_FastFood.csv -O output/_FastFood.csv
+
+echo "coda activate ada38" >/home/ubuntu/start.sh
+echo "python plotlydash/code/the_code.py" >>/home/ubuntu/start.sh
+chmod +x start.sh
 
 # ++++++++++++ END  +++++++++++++
